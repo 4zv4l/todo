@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func help() {
+func help() { // show how to use todo
 	clear()
 	fmt.Println(`Usage :
 	write something to add in the list
@@ -21,11 +21,11 @@ func help() {
 	fmt.Scanln()
 }
 
-func remove(slice []string, s int) []string {
+func remove(slice []string, s int) []string { // remove an element from a slice
 	return append(slice[:s], slice[s+1:]...)
 }
 
-func clear() {
+func clear() { // clear the screen depend on the os
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
@@ -38,7 +38,7 @@ func clear() {
 }
 
 func load() []string {
-	path, _ := os.UserHomeDir()
+	path, _ := os.UserHomeDir() // make the path for the save file
 	path += "/.todo.mine"
 	f, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0600) //open the file in read only
 	if err != nil {
@@ -48,7 +48,7 @@ func load() []string {
 	var buff []string
 	scan := bufio.NewScanner(f)
 	for scan.Scan() {
-		if scan.Text() == "" {
+		if scan.Text() == "" { // remove blank lines
 
 		} else {
 			buff = append(buff, scan.Text())
@@ -73,11 +73,10 @@ func save(b []string) {
 }
 
 func main() {
-	var todo []string = load()
-	var c int
+	var todo []string = load() // load previous todo
 	scan := bufio.NewScanner(os.Stdin)
 	clear()
-	for c != -1 {
+	for {
 		fmt.Println("To do (h for help):")
 		for n, do := range todo {
 			fmt.Printf("  %d. %s\n", n+1, do)
