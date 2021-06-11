@@ -10,8 +10,10 @@ import (
 	"time"
 )
 
+// version var (doesn't work well for now)
 var vers string
 
+// help show how to use todo
 func help() {
 	clear()
 	fmt.Println(`Usage :
@@ -25,10 +27,12 @@ func help() {
 	fmt.Scanln()
 }
 
+// remove an element in an array
 func remove(slice []string, s int) []string {
 	return append(slice[:s], slice[s+1:]...)
 }
 
+// clear the screen
 func clear() {
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/c", "cls")
@@ -41,7 +45,7 @@ func clear() {
 	}
 }
 
-// load the todo file
+// load the todo with the file
 func load() []string {
 	path, _ := os.UserHomeDir() // get user home folder
 	path += "/.todo.mine"
@@ -78,12 +82,14 @@ func save(b []string) {
 	}
 }
 
+// show the todo list
 func show_list(todo []string) {
 	for n, do := range todo {
 		fmt.Printf("  %d. %s\n", n+1, do)
 	}
 }
 
+// add/remove/error if user entered a number
 func action_number(todo *[]string, scan *bufio.Scanner) {
 	num, _ := strconv.Atoi(scan.Text())
 	if num == -1 {
@@ -98,6 +104,7 @@ func action_number(todo *[]string, scan *bufio.Scanner) {
 	}
 }
 
+// save/help/remove all if the user entered a string
 func action_str(todo *[]string, scan *bufio.Scanner) {
 	if scan.Text() == "h" {
 		help()
