@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -49,37 +51,29 @@ func clear() {
 func load() []string {
 	path, _ := os.UserHomeDir() // get user home folder
 	path += "/.todo.mine"
-	f, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0600) //open the file in read only or create it
+	f, err := os.ReadFile(path)
 	if err != nil {
-		print(err)
-		os.Exit(4)
+		return nil
 	}
-	var buff []string
-	scan := bufio.NewScanner(f)
-	for scan.Scan() {
-		if scan.Text() == "" {
-			// if enmpty line -> not include in todo list
-		} else {
-			buff = append(buff, scan.Text()) // get the todo list
-		}
+	// decode the file
+	data, err := base64.StdEncoding.DecodeString(string(f))
+	if err != nil {
+		return nil
 	}
-	f.Close()
-	return buff
+	return strings.Split(string(data), "\n")
 }
 
-// save to the todo file
-func save(b []string) {
-	path, _ := os.UserHomeDir()
+// save to the todo file in base64
+func save(todo []string) {
+	path, _ := os.UserHomeDir() // get user home folder
 	path += "/.todo.mine"
-	f, err := os.OpenFile(path, os.O_WRONLY, 0600)
-	f.Truncate(0)
+	data := base64.StdEncoding.EncodeToString([]byte(strings.Join(todo, "\n")))
+	f, err := os.Create(path)
 	if err != nil {
-		print(err)
-		os.Exit(5)
+		fmt.Println(err)
 	}
-	for _, e := range b {
-		f.WriteString(e + "\n")
-	}
+	f.WriteString(data)
+	f.Close()
 }
 
 // show the todo list
