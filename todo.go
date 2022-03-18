@@ -55,6 +55,9 @@ func load() []string {
 	if err != nil {
 		return nil
 	}
+	if len(f) == 0 {
+		return nil
+	}
 	// decode the file
 	data, err := base64.StdEncoding.DecodeString(string(f))
 	if err != nil {
